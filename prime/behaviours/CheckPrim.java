@@ -5,8 +5,8 @@
  */
 package prime.behaviours;
 
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import java.math.BigInteger;
@@ -34,6 +34,7 @@ public class CheckPrim extends CyclicBehaviour {
             reply.setContent(answer + "");
             //System.out.println("Answer = " + answer);
             myAgent.send(reply);
+
         } else {
             block();
         }

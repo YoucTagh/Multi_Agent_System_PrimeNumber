@@ -10,10 +10,6 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import java.math.*;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import sun.management.resources.agent;
 
 /**
  *
@@ -23,11 +19,10 @@ public class DevideAndAssign extends Behaviour {
 
     private BigInteger numberToCheck;
     private AID[] calculAgents;
-    private ArrayList<String> answers = new ArrayList<>();
     private int countAnswer = 0;
     private MessageTemplate mt;
     private int step = 0;
-    private ArrayList<ACLMessage> replies = new ArrayList<>();
+    private boolean isPrime = true;
     public DevideAndAssign(BigInteger numberToCheck, AID[] calculAgents) {
         this.numberToCheck = numberToCheck;
         this.calculAgents = calculAgents;
@@ -73,9 +68,9 @@ public class DevideAndAssign extends Behaviour {
             case 1:
                 ACLMessage reply =myAgent.receive(mt);
                 if (reply != null) {
-                    replies.add(reply);
-                    if (replies.get(countAnswer).getPerformative() == ACLMessage.INFORM) {
-                        answers.add(replies.get(countAnswer).getContent());
+                    if(reply.getContent().equals("false")){
+                        isPrime = false;
+                        step = 2;
                     }
                     countAnswer++;
                     System.out.println(countAnswer + "-" + calculAgents.length);
@@ -85,7 +80,7 @@ public class DevideAndAssign extends Behaviour {
                 }
                 break;
             case 2:
-                if (isPrime()) {
+                if (isPrime) {
                     System.out.println("Yeah Is Primal !!");
                 } else {
                     System.out.println("No Not Primal !!");
@@ -97,16 +92,10 @@ public class DevideAndAssign extends Behaviour {
 
     @Override
     public boolean done() {
+        if (step == 3)
+            myAgent.doDelete();
         return (step == 3);
     }
 
-    private boolean isPrime() {
-        for (String a : answers) {
-            if (a.equals("false")) {
-                return false;
-            }
-        }
-        return true;
-    }
 
 }

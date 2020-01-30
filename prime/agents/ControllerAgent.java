@@ -32,10 +32,11 @@ public class ControllerAgent extends Agent {
 
     private BigInteger numberToCheck;
     private AID[] calculAgents;
+    private DFAgentDescription[] agents;
 
     @Override
     protected void setup() {
-        System.out.println("Hi ! Controller_Agent " + getAID().getName() + " Ready.");       
+        System.out.println("Hi ! Controller_Agent " + getAID().getName() + " Ready.");
         Object[] args = getArguments();
         if (args != null && args.length > 0) {
             numberToCheck = new BigInteger((String) args[0]);
@@ -56,6 +57,7 @@ public class ControllerAgent extends Agent {
                             calculAgents[i] = result[i].getName();
                             System.out.println(calculAgents[i].getName());
                         }
+                        agents = result;
                     } catch (FIPAException fe) {
                         fe.printStackTrace();
                     }
@@ -70,7 +72,7 @@ public class ControllerAgent extends Agent {
             });
         } else {
             System.out.println("You need to give a number to check !!");
-            doDelete();
+            
         }
 
     }
