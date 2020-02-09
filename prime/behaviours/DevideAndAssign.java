@@ -9,7 +9,10 @@ import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import java.math.*;
+import prime.utils.Pack;
+
+import java.io.IOException;
+import java.math.BigInteger;
 
 /**
  *
@@ -41,22 +44,30 @@ public class DevideAndAssign extends Behaviour {
                 BigInteger range = numberToCheck.divide(new BigInteger("" + calculAgents.length));
                 for (int i = 0; i < calculAgents.length; ++i) {
                     ACLMessage rqst = new ACLMessage(ACLMessage.REQUEST);
+                    BigInteger rangeFrom=null;
+                    BigInteger rangeTo=null;
+                    Pack pack = new Pack(numberToCheck);
+
                     if (i != calculAgents.length - 1) {
-                        rqst.addReceiver(calculAgents[i]);
-                        rqst.setContent(numberToCheck + "," + range.multiply(new BigInteger("" + i))
-                                + "," + range.multiply(new BigInteger("" + (i + 1))));
+                        rangeFrom=range.multiply(new BigInteger("" + i));
+                        rangeTo=range.multiply(new BigInteger("" + (i + 1)));
                     } else {
                         //To take all the remaining range to check
-                        rqst.addReceiver(calculAgents[calculAgents.length - 1]);
-                        rqst.setContent(numberToCheck
-                                + ","
-                                + range.multiply(new BigInteger("" + (calculAgents.length - 1)))
-                                + ","
-                                + range.multiply(new BigInteger("" + calculAgents.length))
-                        );
+                        rangeFrom=range.multiply(new BigInteger("" + (calculAgents.length - 1)));
+                        rangeTo = range.multiply(new BigInteger("" + (calculAgents.length)));
                     }
+
+                    pack.setRangeFrom(rangeFrom);
+                    pack.setRangeTo(rangeTo);
+                    rqst.addReceiver(calculAgents[i]);
                     rqst.setConversationId("num_prim");
                     rqst.setReplyWith("rqst_Youc");
+                    try {
+                        rqst.setContentObject(pack);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     myAgent.send(rqst);
                     mt = MessageTemplate.and(MessageTemplate.MatchConversationId("num_prim"),
                             MessageTemplate.MatchInReplyTo(rqst.getReplyWith()));
@@ -68,7 +79,8 @@ public class DevideAndAssign extends Behaviour {
             case 1:
                 ACLMessage reply =myAgent.receive(mt);
                 if (reply != null) {
-                    if(reply.getContent().equals("false")){
+
+                    if(reply.getPerformative()==ACLMessage.DISCONFIRM){
                         isPrime = false;
                         step = 2;
                     }
