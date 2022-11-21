@@ -2,7 +2,8 @@
 MAS with Jade to check if a given number is a PrimeNumber or Not
 
 # Prerequisites
-[Jade Framework](https://jade.tilab.com/) .
+* [Jade Framework](https://jade.tilab.com/)
+* Java 8
 
 # How to use
   * First you instantiate some CalculAgent. 
